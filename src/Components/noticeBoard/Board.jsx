@@ -1,4 +1,5 @@
 import React from "react";
+import withSplitting from "../../Lib/withSplitting";
 import {
   EmptyList,
   SearchWrapper,
@@ -16,16 +17,15 @@ import {
   MobileTable,
   MobileTableWrapper,
   RsWrapper,
-  CommonButton
-} from "../../../Components/CommonComponents";
+} from "../CommonComponents";
 import styled from "styled-components";
-import withSplitting from "../../../Lib/withSplitting";
 import { withResizeDetector } from "react-resize-detector";
-import CircularIndeterminate from "../../../Components/loading/CircularIndeterminate";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import CircularIndeterminate from "../loading/CircularIndeterminate";
 import { FaUserCircle } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+const Fade = withSplitting(() => import("react-reveal/Fade"));
 
 const SearchInput = styled(TextInput)`
   position: relative;
@@ -72,22 +72,23 @@ const SearchWrapper2 = styled(Wrapper)`
     animation: ${SearchWrapper2} 0.5s forwards;
   }
 `;
-const MM00Presenter = ({
-  width,
-  //
-  currentPage,
-  limit,
-  pages,
-  inputSearch,
-  //
-  mainBannerData,
-  totalCnt,
-  //
-  moveLinkHandler,
-  prevAndNextPageChangeNoticeHandler,
-  changePageHandler,
-}) => {
-    return(
+
+export default withResizeDetector(
+  ({
+    pages,
+    inputSearchValue,
+    limit,
+    currentPage,
+    //
+    noticeDatum,
+    totalCnt,
+    //
+    moveLinkHandler,
+    prevAndNextPageChangeNoticeHandler,
+    changePageHandler,
+    changeSearchValueHandler,
+  }) => {
+    return (
       <WholeWrapper>
         <RsWrapper padding={`100px 0px`}>
           <Wrapper
@@ -102,29 +103,20 @@ const MM00Presenter = ({
                 width={`200px`}
                 padding={`0px 5px 0px 5px`}
                 placeholder="Search"
-                // onKeyDown={(e) =>
-                //   e.keyCode === 13 && changeSearchValueHandler()
-                // }
-                // {...inputSearchValue}
+                onKeyDown={(e) =>
+                  e.keyCode === 13 && changeSearchValueHandler()
+                }
+                {...inputSearchValue}
               />
             </SearchWrapper>
             <SearchWrapper2
               width={`30px`}
               height={`30px`}
               bgColor={`rgb(67, 66, 88)`}
-              // onClick={changeSearchValueHandler}
+              onClick={changeSearchValueHandler}
             >
               <FaSearch />
             </SearchWrapper2>
-          </Wrapper>
-
-          <Wrapper dr={`row`}>
-            <CommonButton
-              width={`80px`}
-              margin={`0px 10px 0px 0px`}
-              >
-              추가
-            </CommonButton>
           </Wrapper>
           <TableWrapper>
             <TableHead>
@@ -140,14 +132,14 @@ const MM00Presenter = ({
               <TableHeadLIST width={`100px`}>작성일</TableHeadLIST>
             </TableHead>
 
-            {mainBannerData ? (
-              mainBannerData.length === 0 ? (
+            {noticeDatum ? (
+              noticeDatum.length === 0 ? (
                 <EmptyList>등록된 게시글이 없습니다.</EmptyList>
               ) : (
-                mainBannerData.map((data, idx) => {
+                noticeDatum.map((data, idx) => {
                   return (
                     <TableBody
-                      key={idx}
+                      key={data._id}
                       onClick={() => moveLinkHandler(data._id)}
                     >
                       <TableBodyLIST width={`100px`}>
@@ -176,13 +168,13 @@ const MM00Presenter = ({
           </TableWrapper>
 
           <MobileTable>
-            {mainBannerData ? (
-              mainBannerData.length === 0 ? (
+            {noticeDatum ? (
+              noticeDatum.length === 0 ? (
                 <EmptyList>등록된 게시글이 없습니다.</EmptyList>
               ) : (
-                mainBannerData.map((data, idx) => {
+                noticeDatum.map((data, idx) => {
                   return (
-                    <MobileTableWrapper key={idx}>
+                    <MobileTableWrapper key={data._id}>
                       <TableBody onClick={() => moveLinkHandler(data._id)}>
                         <TableBodyLIST
                           fontWeight={`800`}
@@ -252,9 +244,6 @@ const MM00Presenter = ({
           )}
         </RsWrapper>
       </WholeWrapper>
-      
-      )
-      
-    }
-    
-export default withResizeDetector(MM00Presenter);
+    );
+  }
+);
