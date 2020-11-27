@@ -22,7 +22,7 @@ const MM00Container = ({history}) => {
 ////////////// - USE EFFECT- //////////////
   return (
     <MM00Presenter
-      mainBannerData={mainBannerData && mainBannerData.getMainBanner}
+      mainBannerData={mainBannerData && mainBannerData.viewNotice}
     />
   );
 }

@@ -12,7 +12,7 @@ import CircularIndeterminate from "../../../Components/loading/CircularIndetermi
 
 const MM00Presenter = ({mainBannerData}) => {
     return(
-        <div>
+      <WholeWrapper margin={`150px 0 0 0`}>
             {mainBannerData ? (
               mainBannerData.length === 0 ? (
               <div>
@@ -23,6 +23,7 @@ const MM00Presenter = ({mainBannerData}) => {
                   return (
                       <div>
                               {data.title}
+                              {data.description}
                               {data.createdAt.slice(0, 13)}
                       </div>
 
@@ -32,7 +33,7 @@ const MM00Presenter = ({mainBannerData}) => {
             ) : (
               <CircularIndeterminate />
             )}
-        </div>
+        </WholeWrapper>
     )
 }
 
