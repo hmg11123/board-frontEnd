@@ -11,6 +11,39 @@ export const VIEW_NOTICE = gql`
  }
 `;
 
+export const VIEW_NOTICE_DETAIL = gql`
+ query viewNoticeBoardDetail($id: String!) {
+  viewNoticeBoardDetail {
+   id
+   title
+   description
+   createdAt
+  }
+ }
+`;
+
+export const VIEW_NOTICE_TOTAL_PAGE = gql`
+ query viewNoticeBoardTotalPage($limit: Int!, $searchValue: String!) {
+  viewNoticeBoardTotalPage(limit: $limit, searchValue: $searchValue)
+ }
+`;
+
+export const VIEW_NOTICE_BEFORE_ID = gql`
+ query viewNoticeBoardBeforeId($id: String!) {
+  viewNoticeBoardBeforeId(id: $id) {
+   id
+  }
+ }
+`;
+
+export const VIEW_NOTICE_NEXT_ID = gql`
+ query viewNoticeBoardNextId($id: String!) {
+  viewNoticeBoardNextId(id: $id) {
+   id
+  }
+ }
+`;
+
 export const CREATE_NOTICE = gql`
  mutation createNotice($title: String!, $description: String!) {
   createNotice(
