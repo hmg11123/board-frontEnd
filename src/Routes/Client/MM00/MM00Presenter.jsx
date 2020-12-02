@@ -16,7 +16,7 @@ import {
   MobileTable,
   MobileTableWrapper,
   RsWrapper,
-  CommonButton
+  CommonButton,
 } from "../../../Components/CommonComponents";
 import styled from "styled-components";
 import withSplitting from "../../../Lib/withSplitting";
@@ -26,6 +26,11 @@ import { FaUserCircle } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const SearchInput = styled(TextInput)`
   position: relative;
@@ -86,6 +91,12 @@ const MM00Presenter = ({
   moveLinkHandler,
   prevAndNextPageChangeNoticeHandler,
   changePageHandler,
+  _isDialogOpenToggle,
+  isDialogOpen,
+  _valueChangeHandler,
+  valueTitle,
+  valueDesc,
+  addNotice
 }) => {
     return(
       <WholeWrapper>
@@ -122,6 +133,7 @@ const MM00Presenter = ({
             <CommonButton
               width={`80px`}
               margin={`0px 10px 0px 0px`}
+              onClick={_isDialogOpenToggle}
               >
               추가
             </CommonButton>
@@ -164,7 +176,7 @@ const MM00Presenter = ({
                       </TableBodyLIST>
                       <TableBodyLIST width={`160px`}>관리자</TableBodyLIST>
                       <TableBodyLIST width={`100px`}>
-                        {data.createdAt.substring(0, 13)}
+                        {data.createdAt.substring(0, 10)}
                       </TableBodyLIST>
                     </TableBody>
                   );
@@ -207,7 +219,7 @@ const MM00Presenter = ({
                           width={`calc(100% / 2)`}
                         >
                           <MdDateRange />
-                          {data.createdAt.substring(0, 13)}
+                          {data.createdAt.substring(0, 10)}
                         </TableBodyLIST>
                       </TableBody>
                     </MobileTableWrapper>
@@ -250,6 +262,41 @@ const MM00Presenter = ({
               </PagenationBtn>
             </PagenationWrapper>
           )}
+          {/* Dialog Area */}
+          <Dialog
+            onClose={_isDialogOpenToggle}
+            aria-labelledby="customized-dialog-title"
+            open={isDialogOpen}
+            fullWidth={true}
+          >
+            <DialogTitle
+              id="customized-dialog-title"
+              onClose={_isDialogOpenToggle}
+              // class="dialog_title"
+            >
+              게시글 추가
+            </DialogTitle>
+            <DialogContent>
+                <Wrapper dr={`row`}>
+                  제목
+                  <TextInput name="title" value={valueTitle} onChange={_valueChangeHandler}/>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  내용
+                  <TextInput name="desc" value={valueDesc} onChange={_valueChangeHandler}/>
+                </Wrapper>
+            </DialogContent>
+            <DialogActions>
+              <Button color="primary" onClick={addNotice}>
+                보내기
+              </Button>
+              <Button color="secondary" onClick={_isDialogOpenToggle}>
+                취소
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+         {/* Dialog Area */}
         </RsWrapper>
       </WholeWrapper>
       
