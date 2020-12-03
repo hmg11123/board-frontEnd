@@ -55,8 +55,6 @@ const MM00Container = ({ history }) => {
   },
  });
 
- const [updateNoticeMutation] = useMutation(UPDATE_NOTICE);
-
  // const [modifynoticePageMutation] = useMutation(CREATE_NOTICE);
 
  ///////////// - EVENT HANDLER- ////////////
@@ -84,23 +82,6 @@ const MM00Container = ({ history }) => {
    toast.error("다시 시도해주세요");
   }
  };
-
- //   const updateNotice = async () => {
- //    const { data } = await updateNoticeMutation({
- //     variables: {
- //      title: value.title,
- //      description: value.desc,
- //     },
- //    });
- //    if (data.updateNotice) {
- //     toast.info("게시글이 수정되었습니다");
- //     noticePageRefetch();
- //     setValue("");
- //     _isDialogOpenToggle();
- //    } else {
- //     toast.error("다시 시도해주세요");
- //    }
- //   };
 
  const _isDialogOpenToggle = () => {
   setIsDialogOpen(!isDialogOpen);
@@ -162,6 +143,7 @@ const MM00Container = ({ history }) => {
    _isDialogOpenToggle={_isDialogOpenToggle}
    isDialogOpen={isDialogOpen}
    _valueChangeHandler={_valueChangeHandler}
+   totalCnt={noticeTotalPage && noticeTotalPage.viewNoticeBoardTotalPage}
    valueTitle={value.title}
    valueDesc={value.desc}
    addNotice={addNotice}

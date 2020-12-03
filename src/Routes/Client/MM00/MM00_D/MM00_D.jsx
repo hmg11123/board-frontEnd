@@ -129,6 +129,25 @@ export default withResizeDetector(({ match, history, width }) => {
 
  ///////////// - EVENT HANDLER- ////////////
 
+ const typeDeleteHandler = (id) => {
+  confirmAlert({
+   title: "DELETE NOTICE BOARD TYPE DATA",
+   message: "선택하신 유형을 삭제하시겠습니까?",
+   buttons: [
+    {
+     label: "취소",
+     onClick: () => {
+      return false;
+     },
+    },
+    {
+     label: "확인",
+     onClick: () => deleteNotice(id),
+    },
+   ],
+  });
+ };
+
  const updateNotice = async () => {
   const { data } = await updateNoticeMutation({
    variables: {
@@ -237,7 +256,11 @@ export default withResizeDetector(({ match, history, width }) => {
       작성일
      </Board_D_List>
      <Board_D_List width={width < 700 ? `100%` : `calc((100% - 150px))`}>
-      {currentData ? currentData.createdAt : <CircularIndeterminate />}
+      {currentData ? (
+       currentData.createdAt.substring(0, 10)
+      ) : (
+       <CircularIndeterminate />
+      )}
      </Board_D_List>
     </Board_D>
 
@@ -257,7 +280,7 @@ export default withResizeDetector(({ match, history, width }) => {
      <CommonButton
       width={`80px`}
       margin={`0px 10px 0px 0px`}
-      onClick={deleteNotice}
+      onClick={() => typeDeleteHandler(noticePageDatum.viewNoticeDetail.id)}
      >
       삭제
      </CommonButton>

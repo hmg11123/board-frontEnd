@@ -160,7 +160,7 @@ const MM00Presenter = ({
         return (
          <TableBody key={idx} onClick={() => moveLinkHandler(data._id)}>
           <TableBodyLIST width={`100px`}>
-           {totalCnt - (currentPage * limit + idx) + ""}
+           {totalCnt + (currentPage * limit + idx) + ""}
           </TableBodyLIST>
           <TableBodyLIST
            fontWeight={`800`}
