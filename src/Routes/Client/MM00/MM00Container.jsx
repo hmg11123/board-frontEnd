@@ -7,28 +7,15 @@ import {
  CREATE_NOTICE,
  VIEW_NOTICE_TOTAL_PAGE,
  UPDATE_NOTICE,
+ VIEW_NOTICE_DETAIL,
+ DELETE_NOTICE,
+ VIEW_NOTICE_BEFORE_ID,
+ VIEW_NOTICE_NEXT_ID,
 } from "./MM00Queries";
 import { toast } from "react-toastify";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
 const MM00Container = ({ history }) => {
- ////////////// - USE QUERY- ///////////////
- const {
-  data: mainBannerData,
-  loading: mainBannerLoading,
-  refetch: mainBannerRefetch,
- } = useQuery(VIEW_NOTICE);
-
- const { data: noticePageData, refetch: noticePageRefetch } = useQuery(
-  VIEW_NOTICE_TOTAL_PAGE,
-  {
-   variables: {
-    searchValue,
-    limit,
-   },
-  }
- );
-
  ////////////// - USE STATE- ///////////////
 
  const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -40,6 +27,28 @@ const MM00Container = ({ history }) => {
   title: "",
   desc: "",
  });
+ ////////////// - USE QUERY- ///////////////
+ const {
+  data: mainBannerData,
+  loading: mainBannerLoading,
+  refetch: mainBannerRefetch,
+ } = useQuery(VIEW_NOTICE, {
+  variables: {
+   searchValue,
+   limit,
+   currentPage,
+  },
+ });
+
+ const { data: noticePageData, refetch: noticePageRefetch } = useQuery(
+  VIEW_NOTICE_TOTAL_PAGE,
+  {
+   variables: {
+    searchValue,
+    limit,
+   },
+  }
+ );
 
  ///////////// - USE MUTATION- /////////////
 
@@ -55,8 +64,8 @@ const MM00Container = ({ history }) => {
  // const [modifyMainBannerMutation] = useMutation(CREATE_NOTICE);
 
  ///////////// - EVENT HANDLER- ////////////
- const moveLinkHandler = (link) => {
-  history.push(`/notice-detail/${link}`);
+ const moveLinkHandler = (idx) => {
+  history.push(`/notice-detail/${idx}`);
  };
 
  const addNotice = async () => {
@@ -80,22 +89,22 @@ const MM00Container = ({ history }) => {
   }
  };
 
- const updateNotice = async () => {
-  const { data } = await updateNoticeMutation({
-   variables: {
-    title: value.title,
-    description: value.desc,
-   },
-  });
-  if (data.updateNotice) {
-   toast.info("게시글이 수정되었습니다");
-   mainBannerRefetch();
-   setValue("");
-   _isDialogOpenToggle();
-  } else {
-   toast.error("다시 시도해주세요");
-  }
- };
+ //   const updateNotice = async () => {
+ //    const { data } = await updateNoticeMutation({
+ //     variables: {
+ //      title: value.title,
+ //      description: value.desc,
+ //     },
+ //    });
+ //    if (data.updateNotice) {
+ //     toast.info("게시글이 수정되었습니다");
+ //     mainBannerRefetch();
+ //     setValue("");
+ //     _isDialogOpenToggle();
+ //    } else {
+ //     toast.error("다시 시도해주세요");
+ //    }
+ //   };
 
  const _isDialogOpenToggle = () => {
   setIsDialogOpen(!isDialogOpen);
@@ -107,6 +116,10 @@ const MM00Container = ({ history }) => {
   nextState[event.target.name] = event.target.value;
 
   setValue(nextState);
+ };
+
+ const changePageHandler = (page) => {
+  setCurrentPage(page);
  };
 
  const prevAndNextPageChangeNoticeHandler = (page) => {
@@ -153,25 +166,11 @@ const MM00Container = ({ history }) => {
    valueTitle={value.title}
    valueDesc={value.desc}
    addNotice={addNotice}
+   changePageHandler={changePageHandler}
    prevAndNextPageChangeNoticeHandler={prevAndNextPageChangeNoticeHandler}
-   updateNotice={updateNotice}
+   //    updateNotice={updateNotice}
   />
  );
 };
 
 export default MM00Container;
-// const infoUpdateHandler = async () => {
-//   const { data } = await modifyMainBannerMutation({
-//     variables: {
-//       id: mainBannerDatum && mainBannerDatum.getMainBanner[currentTab]._id,
-//       title,
-//       content,
-//       link,
-//     },
-//   });
-
-//   if (data.modifyMainBanner) {
-//     toast.info("MAIN BANNER INFORMATION UPDATE");
-//     mainBannerRefetch();
-//   }
-// };

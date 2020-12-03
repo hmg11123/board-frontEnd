@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from "react";
 import {
- VIEW_NOTICEBOARD_DETAIL,
- VIEW_NOTICEBOARD_BEFORE_ID,
- VIEW_NOTICEBOARD_NEXT_ID,
+ VIEW_NOTICE_DETAIL,
+ VIEW_NOTICE_BEFORE_ID,
+ VIEW_NOTICE_NEXT_ID,
+ UPDATE_NOTICE,
+ //  DELETE_NOTICE,
 } from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
-import { useQuery } from "react-apollo-hooks";
+import { useQuery, useMutation } from "react-apollo-hooks";
 import { toast } from "react-toastify";
 import {
  WholeWrapper,
  RsWrapper,
  CommonButton,
  Wrapper,
+ TextInput,
 } from "../../../../Components/CommonComponents";
 import CircularIndeterminate from "../../../../Components/loading/CircularIndeterminate";
 import useTitle from "@4leaf.ysh/use-title";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import { confirmAlert } from "react-confirm-alert";
 
 const Board_D_title = styled.h2`
  width: 100%;
@@ -62,14 +71,32 @@ export default withResizeDetector(({ match, history, width }) => {
  ////////////// - USE CONTEXT- ///////////////
 
  ////////////// - USE STATE- ///////////////
+ const [currentTab, setCurrentTab] = useState(0);
  const [currentData, setCurrentData] = useState(null);
+ const [isDialogOpen, setIsDialogOpen] = useState(false);
+ const [currentPage, setCurrentPage] = useState(0);
+ const [limit, setLimit] = useState(10);
+ const [searchValue, setSearchValue] = useState("");
+ const [value, setValue] = useState({
+  title: "",
+  desc: "",
+ });
  ///////////// - USE QUERY- ////////////////
 
+ const {
+  data: mainBannerData,
+  loading: mainBannerLoading,
+  refetch: mainBannerRefetch,
+ } = useQuery(VIEW_NOTICE_DETAIL, {
+  variables: {
+   id: match.params.key,
+  },
+ });
  const {
   data: noticeData,
   loading: noticeLoading,
   refetch: noticeRefetch,
- } = useQuery(VIEW_NOTICEBOARD_DETAIL, {
+ } = useQuery(VIEW_NOTICE_DETAIL, {
   variables: {
    id: match.params.key,
   },
@@ -79,7 +106,7 @@ export default withResizeDetector(({ match, history, width }) => {
   data: noticeNextData,
   loading: noticeNextLoading,
   refetch: noticeNextRefetch,
- } = useQuery(VIEW_NOTICEBOARD_NEXT_ID, {
+ } = useQuery(VIEW_NOTICE_NEXT_ID, {
   variables: {
    id: match.params.key,
   },
@@ -89,14 +116,49 @@ export default withResizeDetector(({ match, history, width }) => {
   data: noticeBeforeData,
   loading: noticeBeforeLoading,
   refetch: noticeBeforeRefetch,
- } = useQuery(VIEW_NOTICEBOARD_BEFORE_ID, {
+ } = useQuery(VIEW_NOTICE_BEFORE_ID, {
   variables: {
    id: match.params.key,
   },
  });
 
+ ///////////// - USE MUTATION- /////////////
+
+ const [updateNoticeMutation] = useMutation(UPDATE_NOTICE);
+ //  const [deleteNoticeMutation] = useMutation(DELETE_NOTICE);
+
  ///////////// - EVENT HANDLER- ////////////
 
+ const updateNotice = async () => {
+  const { data } = await updateNoticeMutation({
+   variables: {
+    id: mainBannerData && mainBannerData.viewNoticeDetail._id,
+    title: value.title,
+    description: value.desc,
+   },
+  });
+  console.log(data.updateNotice);
+  if (data.updateNotice) {
+   toast.info("게시글이 수정되었습니다");
+   mainBannerRefetch();
+   setValue("");
+   _isDialogOpenToggle();
+  } else {
+   toast.error("다시 시도해주세요");
+  }
+ };
+
+ const _isDialogOpenToggle = () => {
+  setIsDialogOpen(!isDialogOpen);
+ };
+
+ const _valueChangeHandler = (event) => {
+  const nextState = { ...value };
+
+  nextState[event.target.name] = event.target.value;
+
+  setValue(nextState);
+ };
  const _moveListBoard = () => {
   history.push(`/`);
  };
@@ -108,7 +170,7 @@ export default withResizeDetector(({ match, history, width }) => {
 
    return null;
   }
-  history.push(noticeBeforeData.viewNoticeBoardBeforeId.id);
+  history.push(noticeBeforeData.viewNoticeBoardBeforeId._id);
  };
 
  const _moveNextBoard = () => {
@@ -118,7 +180,7 @@ export default withResizeDetector(({ match, history, width }) => {
    return null;
   }
 
-  history.push(noticeNextData.viewNoticeBoardNextId.id);
+  history.push(noticeNextData.viewNoticeBoardNextId._id);
  };
 
  ///////////// - USE EFFECT- ///////////////
@@ -154,7 +216,7 @@ export default withResizeDetector(({ match, history, width }) => {
       작성자
      </Board_D_List>
      <Board_D_List width={width < 700 ? `100%` : `calc((100% - 150px))`}>
-      {currentData ? currentData.id : <CircularIndeterminate />}
+      {currentData ? currentData._id : <CircularIndeterminate />}
      </Board_D_List>
      <Board_D_List width={width < 700 ? `100%` : `250px`} bgColor={`#dcdcdc`}>
       작성일
@@ -170,7 +232,11 @@ export default withResizeDetector(({ match, history, width }) => {
 
     <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
      {/** UD 미완성 */}
-     <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
+     <CommonButton
+      width={`80px`}
+      margin={`0px 10px 0px 0px`}
+      onClick={_isDialogOpenToggle}
+     >
       수정
      </CommonButton>
      <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
@@ -201,6 +267,49 @@ export default withResizeDetector(({ match, history, width }) => {
       다음
      </CommonButton>
     </Wrapper>
+    {/* Dialog Area */}
+    <Dialog
+     onClose={_isDialogOpenToggle}
+     aria-labelledby="customized-dialog-title"
+     open={isDialogOpen}
+     fullWidth={true}
+    >
+     <DialogTitle
+      id="customized-dialog-title"
+      onClose={_isDialogOpenToggle}
+      // class="dialog_title"
+     >
+      게시글 수정
+     </DialogTitle>
+     <DialogContent>
+      <Wrapper dr={`row`}>
+       제목
+       <TextInput
+        name="title"
+        value={value.title}
+        onChange={_valueChangeHandler}
+       />
+      </Wrapper>
+      <Wrapper dr={`row`}>
+       내용
+       <TextInput
+        name="desc"
+        value={value.desc}
+        onChange={_valueChangeHandler}
+       />
+      </Wrapper>
+     </DialogContent>
+     <DialogActions>
+      <Button color="primary" onClick={updateNotice}>
+       수정
+      </Button>
+      <Button color="secondary" onClick={_isDialogOpenToggle}>
+       취소
+      </Button>
+     </DialogActions>
+    </Dialog>
+
+    {/* Dialog Area */}
    </RsWrapper>
   </WholeWrapper>
  );

@@ -1,8 +1,12 @@
 import { gql } from "apollo-boost";
 
 export const VIEW_NOTICE = gql`
- query viewNotice {
-  viewNotice {
+ query viewNotice($searchValue: String!, $limit: Int!, $currentPage: Int!) {
+  viewNotice(
+   searchValue: $searchValue
+   limit: $limit
+   currentPage: $currentPage
+  ) {
    _id
    title
    description
@@ -12,9 +16,9 @@ export const VIEW_NOTICE = gql`
 `;
 
 export const VIEW_NOTICE_DETAIL = gql`
- query viewNoticeBoardDetail($id: String!) {
-  viewNoticeBoardDetail {
-   id
+ query viewNoticeDetail($id: String!) {
+  viewNoticeDetail(id: $id) {
+   _id
    title
    description
    createdAt
@@ -31,7 +35,7 @@ export const VIEW_NOTICE_TOTAL_PAGE = gql`
 export const VIEW_NOTICE_BEFORE_ID = gql`
  query viewNoticeBoardBeforeId($id: String!) {
   viewNoticeBoardBeforeId(id: $id) {
-   id
+   _id
   }
  }
 `;
@@ -39,7 +43,7 @@ export const VIEW_NOTICE_BEFORE_ID = gql`
 export const VIEW_NOTICE_NEXT_ID = gql`
  query viewNoticeBoardNextId($id: String!) {
   viewNoticeBoardNextId(id: $id) {
-   id
+   _id
   }
  }
 `;
@@ -56,17 +60,14 @@ export const CREATE_NOTICE = gql`
 
 export const DELETE_NOTICE = gql`
  mutation deleteNotice($id: ID!) {
-  deleteNotice(_id: $id) {
+  deleteNotice(id: $id) {
    _id
   }
  }
 `;
 
 export const UPDATE_NOTICE = gql`
- mutation updateNotice($title: String!, $description: String!) {
-  updateNotice(title: $title, description: $description) {
-   title
-   description
-  }
+ mutation updateNotice($id: String!, $title: String!, $description: String!) {
+  updateNotice(id: $id, title: $title, description: $description)
  }
 `;
