@@ -85,7 +85,7 @@ const MM00Presenter = ({
  pages,
  inputSearch,
  //
- mainBannerData,
+ noticePageDatum,
  totalCnt,
  //
  moveLinkHandler,
@@ -152,11 +152,11 @@ const MM00Presenter = ({
       <TableHeadLIST width={`100px`}>작성일</TableHeadLIST>
      </TableHead>
 
-     {mainBannerData ? (
-      mainBannerData.length === 0 ? (
+     {noticePageDatum ? (
+      noticePageDatum.length === 0 ? (
        <EmptyList>등록된 게시글이 없습니다.</EmptyList>
       ) : (
-       mainBannerData.map((data, idx) => {
+       noticePageDatum.map((data, idx) => {
         return (
          <TableBody key={idx} onClick={() => moveLinkHandler(data._id)}>
           <TableBodyLIST width={`100px`}>
@@ -185,11 +185,11 @@ const MM00Presenter = ({
     </TableWrapper>
 
     <MobileTable>
-     {mainBannerData ? (
-      mainBannerData.length === 0 ? (
+     {noticePageDatum ? (
+      noticePageDatum.length === 0 ? (
        <EmptyList>등록된 게시글이 없습니다.</EmptyList>
       ) : (
-       mainBannerData.map((data, idx) => {
+       noticePageDatum.map((data, idx) => {
         return (
          <MobileTableWrapper key={idx}>
           <TableBody onClick={() => moveLinkHandler(data._id)}>
@@ -222,7 +222,7 @@ const MM00Presenter = ({
       <PagenationWrapper width={`auto`}>
        <PagenationBtn
         onClick={() =>
-         mainBannerData && prevAndNextPageChangeNoticeHandler(currentPage - 1)
+         noticePageDatum && prevAndNextPageChangeNoticeHandler(currentPage - 1)
         }
        >
         <IoIosArrowBack />
@@ -240,7 +240,7 @@ const MM00Presenter = ({
        })}
        <PagenationBtn
         onClick={() =>
-         mainBannerData && prevAndNextPageChangeNoticeHandler(currentPage + 1)
+         noticePageDatum && prevAndNextPageChangeNoticeHandler(currentPage + 1)
         }
        >
         <IoIosArrowForward />

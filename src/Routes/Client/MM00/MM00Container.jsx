@@ -7,10 +7,6 @@ import {
  CREATE_NOTICE,
  VIEW_NOTICE_TOTAL_PAGE,
  UPDATE_NOTICE,
- VIEW_NOTICE_DETAIL,
- DELETE_NOTICE,
- VIEW_NOTICE_BEFORE_ID,
- VIEW_NOTICE_NEXT_ID,
 } from "./MM00Queries";
 import { toast } from "react-toastify";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -29,7 +25,7 @@ const MM00Container = ({ history }) => {
  });
  ////////////// - USE QUERY- ///////////////
  const {
-  data: mainBannerData,
+  data: noticePageDatum,
   loading: mainBannerLoading,
   refetch: mainBannerRefetch,
  } = useQuery(VIEW_NOTICE, {
@@ -40,7 +36,7 @@ const MM00Container = ({ history }) => {
   },
  });
 
- const { data: noticePageData, refetch: noticePageRefetch } = useQuery(
+ const { data: noticeTotalPage, refetch: noticeTotalRefetch } = useQuery(
   VIEW_NOTICE_TOTAL_PAGE,
   {
    variables: {
@@ -128,7 +124,7 @@ const MM00Container = ({ history }) => {
    return;
   }
 
-  if (page > noticePageData.viewNoticeBoardTotalPage - 1) {
+  if (page > noticeTotalPage.viewNoticeBoardTotalPage - 1) {
    toast.error("마지막 페이지 입니다.");
    return;
   }
@@ -137,23 +133,26 @@ const MM00Container = ({ history }) => {
  };
 
  ////////////// - USE EFFECT- //////////////
+ useEffect(() => {
+  mainBannerRefetch();
+ }, []);
 
  useEffect(() => {
   // noticeDatumRefetch();
-  // noticePageRefetch();
-  if (noticePageData && !pages) {
+  // noticeTotalRefetch();
+  if (noticeTotalPage && !pages) {
    const temp = [];
 
-   for (let i = 0; i < noticePageData.viewNoticeBoardTotalPage; i++) {
+   for (let i = 0; i < noticeTotalPage.viewNoticeBoardTotalPage; i++) {
     temp.push(i);
    }
    setPages(temp);
   }
- }, [noticePageData]);
+ }, [noticeTotalPage]);
 
  return (
   <MM00Presenter
-   mainBannerData={mainBannerData && mainBannerData.viewNotice}
+   noticePageDatum={noticePageDatum && noticePageDatum.viewNotice}
    currentPage={currentPage}
    pages={pages}
    limit={limit}

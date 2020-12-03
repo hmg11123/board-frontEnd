@@ -4,7 +4,7 @@ import {
  VIEW_NOTICE_BEFORE_ID,
  VIEW_NOTICE_NEXT_ID,
  UPDATE_NOTICE,
- //  DELETE_NOTICE,
+ DELETE_NOTICE,
 } from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
@@ -84,7 +84,7 @@ export default withResizeDetector(({ match, history, width }) => {
  ///////////// - USE QUERY- ////////////////
 
  const {
-  data: mainBannerData,
+  data: noticePageDatum,
   loading: mainBannerLoading,
   refetch: mainBannerRefetch,
  } = useQuery(VIEW_NOTICE_DETAIL, {
@@ -125,14 +125,14 @@ export default withResizeDetector(({ match, history, width }) => {
  ///////////// - USE MUTATION- /////////////
 
  const [updateNoticeMutation] = useMutation(UPDATE_NOTICE);
- //  const [deleteNoticeMutation] = useMutation(DELETE_NOTICE);
+ const [deleteNoticeMutation] = useMutation(DELETE_NOTICE);
 
  ///////////// - EVENT HANDLER- ////////////
 
  const updateNotice = async () => {
   const { data } = await updateNoticeMutation({
    variables: {
-    id: mainBannerData && mainBannerData.viewNoticeDetail._id,
+    id: noticePageDatum && noticePageDatum.viewNoticeDetail._id,
     title: value.title,
     description: value.desc,
    },
@@ -181,6 +181,21 @@ export default withResizeDetector(({ match, history, width }) => {
   }
 
   history.push(noticeNextData.viewNoticeBoardNextId._id);
+ };
+
+ const deleteNotice = async () => {
+  const { data } = await deleteNoticeMutation({
+   variables: {
+    id: noticePageDatum && noticePageDatum.viewNoticeDetail._id,
+   },
+  });
+  if (data.deleteNotice) {
+   toast.info("게시글이 삭제되었습니다.");
+   noticeRefetch();
+   history.push(`/`);
+  } else {
+   toast.error("잠시 후 다시 시도해주세요.");
+  }
  };
 
  ///////////// - USE EFFECT- ///////////////
@@ -239,7 +254,11 @@ export default withResizeDetector(({ match, history, width }) => {
      >
       수정
      </CommonButton>
-     <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
+     <CommonButton
+      width={`80px`}
+      margin={`0px 10px 0px 0px`}
+      onClick={deleteNotice}
+     >
       삭제
      </CommonButton>
      {/** UD 미완성 */}
