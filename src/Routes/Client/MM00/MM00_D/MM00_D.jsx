@@ -85,8 +85,8 @@ export default withResizeDetector(({ match, history, width }) => {
 
  const {
   data: noticePageDatum,
-  loading: mainBannerLoading,
-  refetch: mainBannerRefetch,
+  loading: noticePageLoading,
+  refetch: noticePageRefetch,
  } = useQuery(VIEW_NOTICE_DETAIL, {
   variables: {
    id: match.params.key,
@@ -140,7 +140,7 @@ export default withResizeDetector(({ match, history, width }) => {
   console.log(data.updateNotice);
   if (data.updateNotice) {
    toast.info("게시글이 수정되었습니다");
-   mainBannerRefetch();
+   noticePageRefetch();
    setValue("");
    _isDialogOpenToggle();
   } else {

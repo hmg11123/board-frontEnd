@@ -5,7 +5,7 @@ import Slider from "react-slick";
 import styled from "styled-components";
 import { Image, SpanText, Wrapper } from "../CommonComponents";
 
-export default ({ mainBannerData, width }) => {
+export default ({ noticePageDatum, width }) => {
  const [centerPadding, setCenterPadding] = useState("140px");
 
  const settings = {
@@ -139,8 +139,8 @@ export default ({ mainBannerData, width }) => {
  return (
   <Container>
    <Slider {...settings}>
-    {mainBannerData &&
-     mainBannerData.map((data) => {
+    {noticePageDatum &&
+     noticePageDatum.map((data) => {
       return (
        <MainBanner key={data.id}>
         <ImgArea>

@@ -26,8 +26,8 @@ const MM00Container = ({ history }) => {
  ////////////// - USE QUERY- ///////////////
  const {
   data: noticePageDatum,
-  loading: mainBannerLoading,
-  refetch: mainBannerRefetch,
+  loading: noticePageLoading,
+  refetch: noticePageRefetch,
  } = useQuery(VIEW_NOTICE, {
   variables: {
    searchValue,
@@ -57,7 +57,7 @@ const MM00Container = ({ history }) => {
 
  const [updateNoticeMutation] = useMutation(UPDATE_NOTICE);
 
- // const [modifyMainBannerMutation] = useMutation(CREATE_NOTICE);
+ // const [modifynoticePageMutation] = useMutation(CREATE_NOTICE);
 
  ///////////// - EVENT HANDLER- ////////////
  const moveLinkHandler = (idx) => {
@@ -77,7 +77,7 @@ const MM00Container = ({ history }) => {
   const { data } = await addNoticeMutation();
   if (data.createNotice) {
    toast.info("게시글이 추가되었습니다");
-   mainBannerRefetch();
+   noticePageRefetch();
    setValue("");
    _isDialogOpenToggle();
   } else {
@@ -94,7 +94,7 @@ const MM00Container = ({ history }) => {
  //    });
  //    if (data.updateNotice) {
  //     toast.info("게시글이 수정되었습니다");
- //     mainBannerRefetch();
+ //     noticePageRefetch();
  //     setValue("");
  //     _isDialogOpenToggle();
  //    } else {
@@ -134,7 +134,7 @@ const MM00Container = ({ history }) => {
 
  ////////////// - USE EFFECT- //////////////
  useEffect(() => {
-  mainBannerRefetch();
+  noticePageRefetch();
  }, []);
 
  useEffect(() => {
