@@ -679,6 +679,10 @@ export const TableBody = styled.ul`
  /* &:hover {
     background: #f5f5f5;
   } */
+
+ &:hover {
+  background: #f5f5f5;
+ }
 `;
 
 export const TableBodyLIST = styled.li`

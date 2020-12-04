@@ -129,16 +129,6 @@ const MM00Presenter = ({
       <FaSearch />
      </SearchWrapper2>
     </Wrapper>
-
-    <Wrapper dr={`row`}>
-     <CommonButton
-      width={`80px`}
-      margin={`0px 10px 0px 0px`}
-      onClick={_isDialogOpenToggle}
-     >
-      추가
-     </CommonButton>
-    </Wrapper>
     <TableWrapper>
      <TableHead>
       <TableHeadLIST width={`100px`}>번호</TableHeadLIST>
@@ -220,6 +210,16 @@ const MM00Presenter = ({
       <CircularIndeterminate />
      )}
     </MobileTable>
+
+    <Wrapper dr={`row`}>
+     <CommonButton
+      width={`100px`}
+      margin={`0px 10px 0px 0px`}
+      onClick={_isDialogOpenToggle}
+     >
+      게시글 추가
+     </CommonButton>
+    </Wrapper>
     <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
      {pages && pages.length > 0 && (
       <PagenationWrapper width={`auto`}>
