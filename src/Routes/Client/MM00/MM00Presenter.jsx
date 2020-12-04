@@ -101,7 +101,6 @@ const MM00Presenter = ({
  inputSearchValue,
  changeFloorHandler,
 }) => {
- console.log(changeSearchValueHandler());
  return (
   <WholeWrapper>
    <RsWrapper padding={`100px 0px`}>
