@@ -97,7 +97,11 @@ const MM00Presenter = ({
  valueTitle,
  valueDesc,
  addNotice,
+ changeSearchValueHandler,
+ inputSearchValue,
+ changeFloorHandler,
 }) => {
+ console.log(changeSearchValueHandler());
  return (
   <WholeWrapper>
    <RsWrapper padding={`100px 0px`}>
@@ -113,17 +117,15 @@ const MM00Presenter = ({
        width={`200px`}
        padding={`0px 5px 0px 5px`}
        placeholder="Search"
-       // onKeyDown={(e) =>
-       //   e.keyCode === 13 && changeSearchValueHandler()
-       // }
-       // {...inputSearchValue}
+       onKeyDown={(e) => e.keyCode === 13 && changeSearchValueHandler()}
+       {...inputSearchValue}
       />
      </SearchWrapper>
      <SearchWrapper2
       width={`30px`}
       height={`30px`}
       bgColor={`rgb(67, 66, 88)`}
-      // onClick={changeSearchValueHandler}
+      onClick={changeSearchValueHandler}
      >
       <FaSearch />
      </SearchWrapper2>
@@ -160,7 +162,9 @@ const MM00Presenter = ({
         return (
          <TableBody key={idx} onClick={() => moveLinkHandler(data._id)}>
           <TableBodyLIST width={`100px`}>
-           {totalCnt + (currentPage * limit + idx) + ""}
+           {/** 번호 */}
+           {totalCnt - (currentPage * limit + idx) + ""}
+           {/** 번호 */}
           </TableBodyLIST>
           <TableBodyLIST
            fontWeight={`800`}

@@ -6,10 +6,12 @@ import {
  VIEW_NOTICE,
  CREATE_NOTICE,
  VIEW_NOTICE_TOTAL_PAGE,
- UPDATE_NOTICE,
+ VIEW_ALL_NOTICE,
 } from "./MM00Queries";
 import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import useInput from "../../../Hooks/useInput.jsx";
 
 const MM00Container = ({ history }) => {
  ////////////// - USE STATE- ///////////////
@@ -19,6 +21,7 @@ const MM00Container = ({ history }) => {
  const [currentPage, setCurrentPage] = useState(0);
  const [limit, setLimit] = useState(10);
  const [searchValue, setSearchValue] = useState("");
+ const inputSearch = useInput("");
  const [value, setValue] = useState({
   title: "",
   desc: "",
@@ -36,7 +39,7 @@ const MM00Container = ({ history }) => {
   },
  });
 
- const { data: noticeTotalPage, refetch: noticeTotalRefetch } = useQuery(
+ const { data: noticeTotalPage, refetch: noticeTotalPageRefetch } = useQuery(
   VIEW_NOTICE_TOTAL_PAGE,
   {
    variables: {
@@ -45,7 +48,15 @@ const MM00Container = ({ history }) => {
    },
   }
  );
-
+ const {
+  data: noticeAllNotice,
+  loading: noticeAllNoticeLoading,
+  refetch: noticeAllNoticeRefetch,
+ } = useQuery(VIEW_ALL_NOTICE, {
+  variables: {
+   searchValue: searchValue,
+  },
+ });
  ///////////// - USE MUTATION- /////////////
 
  const [addNoticeMutation] = useMutation(CREATE_NOTICE, {
@@ -56,6 +67,37 @@ const MM00Container = ({ history }) => {
  });
 
  // const [modifynoticePageMutation] = useMutation(CREATE_NOTICE);
+
+ ////////////// - USE EFFECT- //////////////
+ useEffect(() => {
+  // noticeDatumRefetch();
+  // noticePageRefetch();
+  if (noticeTotalPage && !pages) {
+   const temp = [];
+
+   for (let i = 0; i < noticeTotalPage.viewNoticeBoardTotalPage; i++) {
+    temp.push(i);
+   }
+   setPages(temp);
+  }
+ }, [noticeTotalPage]);
+ useEffect(() => {
+  noticePageRefetch();
+ }, []);
+
+ useEffect(() => {
+  // noticeDatumRefetch();
+
+  noticePageRefetch();
+  if (noticeTotalPage && !pages) {
+   const temp = [];
+
+   for (let i = 0; i < noticeTotalPage.viewNoticeBoardTotalPage; i++) {
+    temp.push(i);
+   }
+   setPages(temp);
+  }
+ }, [noticeTotalPage]);
 
  ///////////// - EVENT HANDLER- ////////////
  const moveLinkHandler = (idx) => {
@@ -78,6 +120,7 @@ const MM00Container = ({ history }) => {
    noticePageRefetch();
    setValue("");
    _isDialogOpenToggle();
+   noticeAllNoticeRefetch();
   } else {
    toast.error("다시 시도해주세요");
   }
@@ -93,6 +136,18 @@ const MM00Container = ({ history }) => {
   nextState[event.target.name] = event.target.value;
 
   setValue(nextState);
+ };
+
+ const changeFloorHandler = (floor) => {
+  setCurrentFloor(floor);
+  setDetailKey(null);
+  inputSearch.setValue("");
+  setSearchValue("");
+ };
+
+ const changeSearchValueHandler = () => {
+  setPages(null);
+  setSearchValue(inputSearch.value);
  };
 
  const changePageHandler = (page) => {
@@ -113,24 +168,6 @@ const MM00Container = ({ history }) => {
   setCurrentPage(page);
  };
 
- ////////////// - USE EFFECT- //////////////
- useEffect(() => {
-  noticePageRefetch();
- }, []);
-
- useEffect(() => {
-  // noticeDatumRefetch();
-  // noticeTotalRefetch();
-  if (noticeTotalPage && !pages) {
-   const temp = [];
-
-   for (let i = 0; i < noticeTotalPage.viewNoticeBoardTotalPage; i++) {
-    temp.push(i);
-   }
-   setPages(temp);
-  }
- }, [noticeTotalPage]);
-
  return (
   <MM00Presenter
    noticePageDatum={noticePageDatum && noticePageDatum.viewNotice}
@@ -143,12 +180,15 @@ const MM00Container = ({ history }) => {
    _isDialogOpenToggle={_isDialogOpenToggle}
    isDialogOpen={isDialogOpen}
    _valueChangeHandler={_valueChangeHandler}
-   totalCnt={noticeTotalPage && noticeTotalPage.viewNoticeBoardTotalPage}
+   totalCnt={noticeAllNotice && noticeAllNotice.viewAllNotice}
    valueTitle={value.title}
    valueDesc={value.desc}
    addNotice={addNotice}
    changePageHandler={changePageHandler}
+   changeSearchValueHandler={changeSearchValueHandler}
+   changeFloorHandler={changeFloorHandler}
    prevAndNextPageChangeNoticeHandler={prevAndNextPageChangeNoticeHandler}
+   inputSearchValue={inputSearch}
    //    updateNotice={updateNotice}
   />
  );

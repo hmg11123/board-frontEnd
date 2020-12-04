@@ -15,6 +15,12 @@ export const VIEW_NOTICE = gql`
  }
 `;
 
+export const VIEW_ALL_NOTICE = gql`
+ query viewAllNotice($searchValue: String!) {
+  viewAllNotice(searchValue: $searchValue)
+ }
+`;
+
 export const VIEW_NOTICE_DETAIL = gql`
  query viewNoticeDetail($id: String!) {
   viewNoticeDetail(id: $id) {

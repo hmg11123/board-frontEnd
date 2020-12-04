@@ -5,6 +5,7 @@ import {
  VIEW_NOTICE_NEXT_ID,
  UPDATE_NOTICE,
  DELETE_NOTICE,
+ VIEW_ALL_NOTICE,
 } from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
@@ -71,12 +72,9 @@ export default withResizeDetector(({ match, history, width }) => {
  ////////////// - USE CONTEXT- ///////////////
 
  ////////////// - USE STATE- ///////////////
- const [currentTab, setCurrentTab] = useState(0);
  const [currentData, setCurrentData] = useState(null);
- const [isDialogOpen, setIsDialogOpen] = useState(false);
- const [currentPage, setCurrentPage] = useState(0);
- const [limit, setLimit] = useState(10);
  const [searchValue, setSearchValue] = useState("");
+ const [isDialogOpen, setIsDialogOpen] = useState(false);
  const [value, setValue] = useState({
   title: "",
   desc: "",
@@ -84,12 +82,12 @@ export default withResizeDetector(({ match, history, width }) => {
  ///////////// - USE QUERY- ////////////////
 
  const {
-  data: noticePageDatum,
-  loading: noticePageLoading,
-  refetch: noticePageRefetch,
- } = useQuery(VIEW_NOTICE_DETAIL, {
+  data: noticeAllNotice,
+  loading: noticeAllNoticeLoading,
+  refetch: noticeAllNoticeRefetch,
+ } = useQuery(VIEW_ALL_NOTICE, {
   variables: {
-   id: match.params.key,
+   searchValue: searchValue,
   },
  });
  const {
@@ -151,23 +149,26 @@ export default withResizeDetector(({ match, history, width }) => {
  const updateNotice = async () => {
   const { data } = await updateNoticeMutation({
    variables: {
-    id: noticePageDatum && noticePageDatum.viewNoticeDetail._id,
+    id: noticeData && noticeData.viewNoticeDetail._id,
     title: value.title,
     description: value.desc,
    },
   });
-  console.log(data.updateNotice);
   if (data.updateNotice) {
    toast.info("게시글이 수정되었습니다");
-   noticePageRefetch();
+   noticeRefetch();
    setValue("");
    _isDialogOpenToggle();
+   noticeAllNoticeRefetch();
   } else {
    toast.error("다시 시도해주세요");
   }
  };
 
  const _isDialogOpenToggle = () => {
+  if (!isDialogOpen) {
+   setValue({ title: currentData.title, desc: currentData.description });
+  }
   setIsDialogOpen(!isDialogOpen);
  };
 
@@ -183,9 +184,8 @@ export default withResizeDetector(({ match, history, width }) => {
  };
 
  const _moveBeforeBoard = () => {
-  console.log(noticeBeforeData.viewNoticeBoardBeforeId);
   if (noticeBeforeData.viewNoticeBoardBeforeId === null) {
-   toast.error("첫번째 글 입니다.");
+   toast.error("마지막 글 입니다.");
 
    return null;
   }
@@ -194,7 +194,7 @@ export default withResizeDetector(({ match, history, width }) => {
 
  const _moveNextBoard = () => {
   if (noticeNextData.viewNoticeBoardNextId === null) {
-   toast.error("마지막 글 입니다.");
+   toast.error("첫번째 글 입니다.");
 
    return null;
   }
@@ -205,13 +205,14 @@ export default withResizeDetector(({ match, history, width }) => {
  const deleteNotice = async () => {
   const { data } = await deleteNoticeMutation({
    variables: {
-    id: noticePageDatum && noticePageDatum.viewNoticeDetail._id,
+    id: noticeData && noticeData.viewNoticeDetail._id,
    },
   });
   if (data.deleteNotice) {
    toast.info("게시글이 삭제되었습니다.");
    noticeRefetch();
    history.push(`/`);
+   noticeAllNoticeRefetch();
   } else {
    toast.error("잠시 후 다시 시도해주세요.");
   }
@@ -280,7 +281,7 @@ export default withResizeDetector(({ match, history, width }) => {
      <CommonButton
       width={`80px`}
       margin={`0px 10px 0px 0px`}
-      onClick={() => typeDeleteHandler(noticePageDatum.viewNoticeDetail.id)}
+      onClick={() => typeDeleteHandler(noticeData.viewNoticeDetail.id)}
      >
       삭제
      </CommonButton>
@@ -296,7 +297,7 @@ export default withResizeDetector(({ match, history, width }) => {
      <CommonButton
       width={`80px`}
       margin={`0px 10px 0px 0px`}
-      onClick={() => _moveBeforeBoard()}
+      onClick={() => _moveNextBoard()}
      >
       이전
      </CommonButton>
@@ -304,7 +305,7 @@ export default withResizeDetector(({ match, history, width }) => {
      <CommonButton
       width={`80px`}
       margin={`0px 10px 0px 0px`}
-      onClick={() => _moveNextBoard()}
+      onClick={() => _moveBeforeBoard()}
      >
       다음
      </CommonButton>
